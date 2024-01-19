@@ -81,7 +81,7 @@ df[, variables2] <- lapply(df[, variables2], function(x) {
     x <- ifelse(x == 600, 6, x)
     x
 })
-rm(cvariables, valid_cvalues, valid_jvalues, variables1, variables_to_remove, variables2, valid_j2values)
+rm(valid_cvalues, valid_jvalues, variables_to_remove, valid_j2values)
 
 # List of variables
 variables <- c("Water", "LowCalorie", "Fizzy", "Squash", "OrangeJuice", "GrapeJuice", "FruitVegeJuice", "FruitSmoothie", "DairySmoothie", "InstantCoffee", "FilterCoffee", "Cappuccino", "Latte", "Espresso", "OtherCoffee", "LowCalorieHotChocolate", "HotChocolate", "StandTea", "RooibosTea",  "GreenTea", "HerbalTea", "OtherTea")
@@ -186,13 +186,13 @@ df$tea_mean <- apply(df[, paste("tea", suffixes, sep="_")], 1, function(x) {
 
 # Remove tea_* columns
 df <- df[ , !(names(df) %in% paste("tea", suffixes, sep="_"))]
-rm(columns, tea_vars, new_column, suffix)
+rm(columns, tea_vars, new_column, suffix, suffixes)
 write.csv(df, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\food_liquids.csv",na='',row.names=FALSE)
 rm(list=ls())
 ```
 
 ```{r}
-# meat_vege
+# meat_vege data 
 #add all ICs
 library(dplyr)
 rawdata <- read.csv(file = 'C:/Users/timothy/Documents/GWAS_data/dairy/IGF1data.csv')
@@ -271,7 +271,7 @@ df[, fruit_variables] <- lapply(df[, fruit_variables], function(x) {
     x <- ifelse(x == 400, 4, x)
     x
 })
-
+rm(valid_cvalues, valid_egg_values,valid_fish_values, valid_fruit_values, valid_meat_values, valid_vegeAlter_values, valid_vegetable_values)
 # List of variables
 variables <- c("WholeEgg","Omelette","EgginSandwich","ScotchEgg","OthEgg","Sausage","Beef","Pork","Lamb","CrumbPoultry","Poultry","Bacon","Ham","Liver","OthMeat","TinTuna","OilyFish","BreadFish","BatteredFish","WhiteFish","Prawns","LobsterCrab","Shellfish","OthFish","VegeSausage","Tofu","Quorn","OthVegeAlter","BakeBean","Pulse","FriedPotato","BoilPotato","MashPotato","MixVege","VegePiece","Coleslaw","SideSalad","Avocado","BroadBean","GreenBean","Beetroot","Broccoli","Butternut","Cabbage","Carrot","Cauliflower","Celery","Courgette","Cucumber","Garlic","Leek","Lettuce","Mushroom","Onion","Parsnip","Pea","Sweetpepper","Spinach","Sprouts","Sweetcorn","Sweetpotato","FreshTomato","TinTomato","Turnip","Watercress","OthVege","StewedFruit","Prune","DriedFruit","MixFruit","Apple","Banana","Berry","Cherry","Grapefruit","Grape","Mango","Melon","Orange","Satsuma","Peach","Pear","Pineapple","Plum","OthFruit")
 
@@ -473,10 +473,11 @@ df$fruit_mean <- apply(df[, paste("fruit", suffixes, sep="_")], 1, function(x) {
 # Remove fruit_* columns
 df <- df[ , !(names(df) %in% paste("fruit", suffixes, sep="_"))]
 rm(columns, fruit_vars, new_column, suffix)
-
+rm(cols, suffixes, var, variables)
 # remove unwanted variables
 # variables to remove
-variables_to_remove <- c()
+n_variables <- c("FatRemoveMeat_1.0", "FatRemoveMeat_2.0", "FatRemoveMeat_3.0", "FatRemoveMeat_4.0", "FatRemoveMeat_0.0", "SkinRemovdPoultry_1.0", "SkinRemovdPoultry_2.0", "SkinRemovdPoultry_3.0", "SkinRemovdPoultry_4.0", "SkinRemovdPoultry_0.0")
+variables_to_remove <- c(cvariables, egg_variables, fish_variables, fruit_variables, meat_variables, n_variables, vegetable_variables, vegeAlter_variables)
 df <- df %>% select(-one_of(variables_to_remove))
 write.csv(df, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\food_meat_vegetable.csv",na='',row.names=FALSE)
 rm(list=ls())
@@ -600,10 +601,6 @@ for(factor_var in factor_vars) {
 write.csv(results, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\output\\liquids_meat_vege\\interactions_liquids.csv",na='',row.names=FALSE)
 rm(list=ls())
 
-
-```
-
-```{r}
 # maineffects for meat_vege data
 library(lmerTest)
 df<-read.csv(file = 'C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\food_meat_vegetable.csv')
@@ -611,6 +608,7 @@ df<-read.csv(file = 'C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\
 df$APOE_all <- as.factor(df$APOE_all)
 df$T40_Gcar <- as.factor(df$T40_Gcar)
 df$family_history_AD <- as.factor(df$family_history_AD)
+
 df$Sex <- as.factor(df$Sex)
 df$AlcoholY08 <- as.factor(df$AlcoholY08)
 df$SmokingY08 <- as.factor(df$SmokingY08)
@@ -619,9 +617,10 @@ df$EID <- as.factor(df$EID)
 results <- data.frame()
 # List of variables to test
 
-test_vars <- c("Water_mean", "LowCalorie_mean", "Fizzy_mean", "Squash_mean", "OrangeJuice_mean", "GrapeJuice_mean", "FruitVegeJuice_mean", "FruitSmoothie_mean", "DairySmoothie_mean", "InstantCoffee_mean", "FilterCoffee_mean", "Cappuccino_mean", "Latte_mean", "Espresso_mean", "OtherCoffee_mean", "LowCalorieHotChocolate_mean", "HotChocolate_mean", "StandTea_mean", "RooibosTea_mean", "GreenTea_mean", "HerbalTea_mean", "OtherTea_mean", "juice_mean", "coffee_mean", "tea_mean")
+test_vars <- c("WholeEgg_mean", "Omelette_mean", "EgginSandwich_mean", "ScotchEgg_mean", "OthEgg_mean", "Sausage_mean", "Beef_mean", "Pork_mean", "Lamb_mean", "CrumbPoultry_mean", "Poultry_mean", "Bacon_mean", "Ham_mean", "Liver_mean", "OthMeat_mean", "TinTuna_mean", "OilyFish_mean", "BreadFish_mean", "BatteredFish_mean", "WhiteFish_mean", "Prawns_mean", "LobsterCrab_mean", "Shellfish_mean", "OthFish_mean", "VegeSausage_mean", "Tofu_mean", "Quorn_mean", "OthVegeAlter_mean", "BakeBean_mean", "Pulse_mean", "FriedPotato_mean", "BoilPotato_mean", "MashPotato_mean", "MixVege_mean", "VegePiece_mean", "Coleslaw_mean", "SideSalad_mean", "Avocado_mean", "BroadBean_mean", "GreenBean_mean", "Beetroot_mean", "Broccoli_mean", "Butternut_mean", "Cabbage_mean", "Carrot_mean", "Cauliflower_mean", "Celery_mean", "Courgette_mean", "Cucumber_mean", "Garlic_mean", "Leek_mean", "Lettuce_mean", "Mushroom_mean", "Onion_mean", "Parsnip_mean", "Pea_mean", "Sweetpepper_mean", "Spinach_mean", "Sprouts_mean", "Sweetcorn_mean", "Sweetpotato_mean", "FreshTomato_mean", "TinTomato_mean", "Turnip_mean", "Watercress_mean", "OthVege_mean", "StewedFruit_mean", "Prune_mean", "DriedFruit_mean", "MixFruit_mean", "Apple_mean", "Banana_mean", "Berry_mean", "Cherry_mean", "Grapefruit_mean", "Grape_mean", "Mango_mean", "Melon_mean", "Orange_mean", "Satsuma_mean", "Peach_mean", "Pear_mean", "Pineapple_mean", "Plum_mean", "OthFruit_mean", "egg_mean", "meat_mean", "fish_mean", "vegeAlter_mean", "vegetable_mean", "fruit_mean")
 
 dependent_vars <- c("rsfMRI_Component1", "rsfMRI_Component2",	"rsfMRI_Component3", "rsfMRI_Component4","rsfMRI_Component5", "rsfMRI_Component6", "rsfMRI_Component7", "rsfMRI_Component8", "rsfMRI_Component9", "rsfMRI_Component10", "rsfMRI_Component11", "rsfMRI_Component12", "rsfMRI_Component13", "rsfMRI_Component14", "rsfMRI_Component15", "rsfMRI_Component16", "rsfMRI_Component17",	"rsfMRI_Component18",	"rsfMRI_Component19", "rsfMRI_Component20", "rsfMRI_Component21")
+
 
 # Double loop through each dependent and test variable and fit the model
 for (dep_var in dependent_vars) {
@@ -651,12 +650,12 @@ for (dep_var in dependent_vars) {
                                          p_value = p_value))
   }
 }
-write.csv(results, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\output\\liquids_meat_vege\\maineffect_liquids.csv",na='',row.names=FALSE)
+write.csv(results, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\output\\liquids_meat_vege\\maineffect_meat_vege.csv",na='',row.names=FALSE)
 rm(list=ls())
 
 #interaction test for all liquids data
 library(lmerTest)
-df<-read.csv(file = 'C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\food_liquids.csv')
+df<-read.csv(file = 'C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\food_meat_vegetable.csv')
 
 # Fit the model -- factor all factor variables
 factor_vars <- c("AlcoholY08", "SmokingY08", "Assessment_0", "EID")
@@ -666,7 +665,7 @@ for (var in factor_vars) {
 rm(factor_vars,var)
 
 # Scale all continuous variables
-scale_vars <- c("Water_mean", "LowCalorie_mean", "Fizzy_mean", "Squash_mean", "OrangeJuice_mean", "GrapeJuice_mean", "FruitVegeJuice_mean", "FruitSmoothie_mean", "DairySmoothie_mean", "InstantCoffee_mean", "FilterCoffee_mean", "Cappuccino_mean", "Latte_mean", "Espresso_mean", "OtherCoffee_mean", "LowCalorieHotChocolate_mean", "HotChocolate_mean", "StandTea_mean", "RooibosTea_mean", "GreenTea_mean", "HerbalTea_mean", "OtherTea_mean", "juice_mean", "coffee_mean", "tea_mean", "rsfMRI_Component1", "rsfMRI_Component2",	"rsfMRI_Component3", "rsfMRI_Component4","rsfMRI_Component5", "rsfMRI_Component6", "rsfMRI_Component7", "rsfMRI_Component8", "rsfMRI_Component9", "rsfMRI_Component10", "rsfMRI_Component11", "rsfMRI_Component12", "rsfMRI_Component13", "rsfMRI_Component14", "rsfMRI_Component15", "rsfMRI_Component16", "rsfMRI_Component17",	"rsfMRI_Component18",	"rsfMRI_Component19", "rsfMRI_Component20", "rsfMRI_Component21", "Age_Baseline", "BMI_Y08andY12andY14_mean")
+scale_vars <- c("WholeEgg_mean", "Omelette_mean", "EgginSandwich_mean", "ScotchEgg_mean", "OthEgg_mean", "Sausage_mean", "Beef_mean", "Pork_mean", "Lamb_mean", "CrumbPoultry_mean", "Poultry_mean", "Bacon_mean", "Ham_mean", "Liver_mean", "OthMeat_mean", "TinTuna_mean", "OilyFish_mean", "BreadFish_mean", "BatteredFish_mean", "WhiteFish_mean", "Prawns_mean", "LobsterCrab_mean", "Shellfish_mean", "OthFish_mean", "VegeSausage_mean", "Tofu_mean", "Quorn_mean", "OthVegeAlter_mean", "BakeBean_mean", "Pulse_mean", "FriedPotato_mean", "BoilPotato_mean", "MashPotato_mean", "MixVege_mean", "VegePiece_mean", "Coleslaw_mean", "SideSalad_mean", "Avocado_mean", "BroadBean_mean", "GreenBean_mean", "Beetroot_mean", "Broccoli_mean", "Butternut_mean", "Cabbage_mean", "Carrot_mean", "Cauliflower_mean", "Celery_mean", "Courgette_mean", "Cucumber_mean", "Garlic_mean", "Leek_mean", "Lettuce_mean", "Mushroom_mean", "Onion_mean", "Parsnip_mean", "Pea_mean", "Sweetpepper_mean", "Spinach_mean", "Sprouts_mean", "Sweetcorn_mean", "Sweetpotato_mean", "FreshTomato_mean", "TinTomato_mean", "Turnip_mean", "Watercress_mean", "OthVege_mean", "StewedFruit_mean", "Prune_mean", "DriedFruit_mean", "MixFruit_mean", "Apple_mean", "Banana_mean", "Berry_mean", "Cherry_mean", "Grapefruit_mean", "Grape_mean", "Mango_mean", "Melon_mean", "Orange_mean", "Satsuma_mean", "Peach_mean", "Pear_mean", "Pineapple_mean", "Plum_mean", "OthFruit_mean", "egg_mean", "meat_mean", "fish_mean", "vegeAlter_mean", "vegetable_mean", "fruit_mean", "rsfMRI_Component1", "rsfMRI_Component2",	"rsfMRI_Component3", "rsfMRI_Component4","rsfMRI_Component5", "rsfMRI_Component6", "rsfMRI_Component7", "rsfMRI_Component8", "rsfMRI_Component9", "rsfMRI_Component10", "rsfMRI_Component11", "rsfMRI_Component12", "rsfMRI_Component13", "rsfMRI_Component14", "rsfMRI_Component15", "rsfMRI_Component16", "rsfMRI_Component17",	"rsfMRI_Component18",	"rsfMRI_Component19", "rsfMRI_Component20", "rsfMRI_Component21", "Age_Baseline", "BMI_Y08andY12andY14_mean")
 
 for (var in scale_vars) {
   df[[var]] <- as.numeric(df[[var]])
@@ -677,7 +676,7 @@ rm(scale_vars, var)
 dependent_vars <- c("rsfMRI_Component1", "rsfMRI_Component2",	"rsfMRI_Component3", "rsfMRI_Component4","rsfMRI_Component5", "rsfMRI_Component6", "rsfMRI_Component7", "rsfMRI_Component8", "rsfMRI_Component9", "rsfMRI_Component10", "rsfMRI_Component11", "rsfMRI_Component12", "rsfMRI_Component13", "rsfMRI_Component14", "rsfMRI_Component15", "rsfMRI_Component16", "rsfMRI_Component17",	"rsfMRI_Component18",	"rsfMRI_Component19", "rsfMRI_Component20", "rsfMRI_Component21")
 
 # List of variables to test
-test_vars <- c("Water_mean", "LowCalorie_mean", "Fizzy_mean", "Squash_mean", "OrangeJuice_mean", "GrapeJuice_mean", "FruitVegeJuice_mean", "FruitSmoothie_mean", "DairySmoothie_mean", "InstantCoffee_mean", "FilterCoffee_mean", "Cappuccino_mean", "Latte_mean", "Espresso_mean", "OtherCoffee_mean", "LowCalorieHotChocolate_mean", "HotChocolate_mean", "StandTea_mean", "RooibosTea_mean", "GreenTea_mean", "HerbalTea_mean", "OtherTea_mean", "juice_mean", "coffee_mean", "tea_mean")
+test_vars <- c("WholeEgg_mean", "Omelette_mean", "EgginSandwich_mean", "ScotchEgg_mean", "OthEgg_mean", "Sausage_mean", "Beef_mean", "Pork_mean", "Lamb_mean", "CrumbPoultry_mean", "Poultry_mean", "Bacon_mean", "Ham_mean", "Liver_mean", "OthMeat_mean", "TinTuna_mean", "OilyFish_mean", "BreadFish_mean", "BatteredFish_mean", "WhiteFish_mean", "Prawns_mean", "LobsterCrab_mean", "Shellfish_mean", "OthFish_mean", "VegeSausage_mean", "Tofu_mean", "Quorn_mean", "OthVegeAlter_mean", "BakeBean_mean", "Pulse_mean", "FriedPotato_mean", "BoilPotato_mean", "MashPotato_mean", "MixVege_mean", "VegePiece_mean", "Coleslaw_mean", "SideSalad_mean", "Avocado_mean", "BroadBean_mean", "GreenBean_mean", "Beetroot_mean", "Broccoli_mean", "Butternut_mean", "Cabbage_mean", "Carrot_mean", "Cauliflower_mean", "Celery_mean", "Courgette_mean", "Cucumber_mean", "Garlic_mean", "Leek_mean", "Lettuce_mean", "Mushroom_mean", "Onion_mean", "Parsnip_mean", "Pea_mean", "Sweetpepper_mean", "Spinach_mean", "Sprouts_mean", "Sweetcorn_mean", "Sweetpotato_mean", "FreshTomato_mean", "TinTomato_mean", "Turnip_mean", " Watercress_mean", " OthVege_mean", " StewedFruit_mean", " Prune_mean", " DriedFruit_mean", " MixFruit_mean", " Apple_mean", " Banana_mean", " Berry_mean", " Cherry_mean", " Grapefruit_mean", " Grape_mean", " Mango_mean", " Melon_mean", " Orange_mean", " Satsuma_mean", " Peach_mean", " Pear_mean", " Pineapple_mean", " Plum_mean", " OthFruit_mean", " egg_mean", " meat_mean", " fish_mean", " vegeAlter_mean", " vegetable_mean", " fruit_mean")
 
 # List of factors
 factor_vars <- c("APOE_all", "T40_Gcar", "family_history_AD")
@@ -717,8 +716,6 @@ for(factor_var in factor_vars) {
     }
   }
 }
-write.csv(results, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\output\\liquids_meat_vege\\interactions_liquids.csv",na='',row.names=FALSE)
+write.csv(results, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\output\\liquids_meat_vege\\interactions_meat_vege.csv",na='',row.names=FALSE)
 rm(list=ls())
-
-
 ```
