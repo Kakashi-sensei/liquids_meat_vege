@@ -676,7 +676,7 @@ rm(scale_vars, var)
 dependent_vars <- c("rsfMRI_Component1", "rsfMRI_Component2",	"rsfMRI_Component3", "rsfMRI_Component4","rsfMRI_Component5", "rsfMRI_Component6", "rsfMRI_Component7", "rsfMRI_Component8", "rsfMRI_Component9", "rsfMRI_Component10", "rsfMRI_Component11", "rsfMRI_Component12", "rsfMRI_Component13", "rsfMRI_Component14", "rsfMRI_Component15", "rsfMRI_Component16", "rsfMRI_Component17",	"rsfMRI_Component18",	"rsfMRI_Component19", "rsfMRI_Component20", "rsfMRI_Component21")
 
 # List of variables to test
-test_vars <- c("WholeEgg_mean", "Omelette_mean", "EgginSandwich_mean", "ScotchEgg_mean", "OthEgg_mean", "Sausage_mean", "Beef_mean", "Pork_mean", "Lamb_mean", "CrumbPoultry_mean", "Poultry_mean", "Bacon_mean", "Ham_mean", "Liver_mean", "OthMeat_mean", "TinTuna_mean", "OilyFish_mean", "BreadFish_mean", "BatteredFish_mean", "WhiteFish_mean", "Prawns_mean", "LobsterCrab_mean", "Shellfish_mean", "OthFish_mean", "VegeSausage_mean", "Tofu_mean", "Quorn_mean", "OthVegeAlter_mean", "BakeBean_mean", "Pulse_mean", "FriedPotato_mean", "BoilPotato_mean", "MashPotato_mean", "MixVege_mean", "VegePiece_mean", "Coleslaw_mean", "SideSalad_mean", "Avocado_mean", "BroadBean_mean", "GreenBean_mean", "Beetroot_mean", "Broccoli_mean", "Butternut_mean", "Cabbage_mean", "Carrot_mean", "Cauliflower_mean", "Celery_mean", "Courgette_mean", "Cucumber_mean", "Garlic_mean", "Leek_mean", "Lettuce_mean", "Mushroom_mean", "Onion_mean", "Parsnip_mean", "Pea_mean", "Sweetpepper_mean", "Spinach_mean", "Sprouts_mean", "Sweetcorn_mean", "Sweetpotato_mean", "FreshTomato_mean", "TinTomato_mean", "Turnip_mean", " Watercress_mean", " OthVege_mean", " StewedFruit_mean", " Prune_mean", " DriedFruit_mean", " MixFruit_mean", " Apple_mean", " Banana_mean", " Berry_mean", " Cherry_mean", " Grapefruit_mean", " Grape_mean", " Mango_mean", " Melon_mean", " Orange_mean", " Satsuma_mean", " Peach_mean", " Pear_mean", " Pineapple_mean", " Plum_mean", " OthFruit_mean", " egg_mean", " meat_mean", " fish_mean", " vegeAlter_mean", " vegetable_mean", " fruit_mean")
+test_vars <- c("WholeEgg_mean", "Omelette_mean", "EgginSandwich_mean", "ScotchEgg_mean", "OthEgg_mean", "Sausage_mean", "Beef_mean", "Pork_mean", "Lamb_mean", "CrumbPoultry_mean", "Poultry_mean", "Bacon_mean", "Ham_mean", "Liver_mean", "OthMeat_mean", "TinTuna_mean", "OilyFish_mean", "BreadFish_mean", "BatteredFish_mean", "WhiteFish_mean", "Prawns_mean", "LobsterCrab_mean", "Shellfish_mean", "OthFish_mean", "VegeSausage_mean", "Tofu_mean", "Quorn_mean", "OthVegeAlter_mean", "BakeBean_mean", "Pulse_mean", "FriedPotato_mean", "BoilPotato_mean", "MashPotato_mean", "MixVege_mean", "VegePiece_mean", "Coleslaw_mean", "SideSalad_mean", "Avocado_mean", "BroadBean_mean", "GreenBean_mean", "Beetroot_mean", "Broccoli_mean", "Butternut_mean", "Cabbage_mean", "Carrot_mean", "Cauliflower_mean", "Celery_mean", "Courgette_mean", "Cucumber_mean", "Garlic_mean", "Leek_mean", "Lettuce_mean", "Mushroom_mean", "Onion_mean", "Parsnip_mean", "Pea_mean", "Sweetpepper_mean", "Spinach_mean", "Sprouts_mean", "Sweetcorn_mean", "Sweetpotato_mean", "FreshTomato_mean", "TinTomato_mean", "Turnip_mean", "Watercress_mean", "OthVege_mean", "StewedFruit_mean", "Prune_mean", "DriedFruit_mean", "MixFruit_mean", "Apple_mean", "Banana_mean", "Berry_mean", "Cherry_mean", "Grapefruit_mean", "Grape_mean", "Mango_mean", "Melon_mean", "Orange_mean", "Satsuma_mean", "Peach_mean", "Pear_mean", "Pineapple_mean", "Plum_mean", "OthFruit_mean", "egg_mean", "meat_mean", "fish_mean", "vegeAlter_mean", "vegetable_mean", "fruit_mean")
 
 # List of factors
 factor_vars <- c("APOE_all", "T40_Gcar", "family_history_AD")
@@ -719,3 +719,42 @@ for(factor_var in factor_vars) {
 write.csv(results, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\output\\liquids_meat_vege\\interactions_meat_vege.csv",na='',row.names=FALSE)
 rm(list=ls())
 ```
+
+
+```{r}
+# the following code is used to re-range the raw output
+
+df<-read.csv(file = 'C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\sort\\01.csv')
+library(tidyverse)
+
+# Calculate the number of groups
+num_groups <- nrow(df) / 21
+
+# Create a grouping variable
+df$group <- rep(1:num_groups, each=21)
+
+# Reshape the data
+df_wide <- df %>%
+  group_by(group) %>%
+  mutate(row_in_group = row_number()) %>%
+  pivot_wider(
+    id_cols = row_in_group,
+    names_from = group,
+    values_from = c(Estimate, Std_Error, p_value),
+    names_glue = "{.value}_Group{group}"
+  )
+
+# Arrange columns in the desired order
+col_order <- c(rbind(
+  paste0("Estimate_Group", 1:num_groups),
+  paste0("Std_Error_Group", 1:num_groups),
+  paste0("p_value_Group", 1:num_groups)
+))
+
+df_wide <- df_wide %>% select(all_of(col_order))
+
+# View the result
+write.csv(df_wide, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\sort\\02.csv",na='',row.names=FALSE)
+
+```
+
