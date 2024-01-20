@@ -653,7 +653,7 @@ for (dep_var in dependent_vars) {
 write.csv(results, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\output\\liquids_meat_vege\\maineffect_meat_vege.csv",na='',row.names=FALSE)
 rm(list=ls())
 
-#interaction test for all liquids data
+#interaction test for all meat_vegetable data
 library(lmerTest)
 df<-read.csv(file = 'C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\food_meat_vegetable.csv')
 
@@ -722,7 +722,7 @@ rm(list=ls())
 
 
 ```{r}
-# the following code is used to re-range the raw output
+# the following code is used to re-range the raw output (maineffects)
 
 df<-read.csv(file = 'C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\sort\\01.csv')
 library(tidyverse)
@@ -756,5 +756,41 @@ df_wide <- df_wide %>% select(all_of(col_order))
 # View the result
 write.csv(df_wide, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\sort\\02.csv",na='',row.names=FALSE)
 
+```
+
+```{r}
+# the following code is used to re-range the raw output (interactions) because in the interactions tests, the std error is not in the summary
+
+df<-read.csv(file = 'C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\sort\\01.csv')
+library(tidyverse)
+
+# Calculate the number of groups
+num_groups <- nrow(df) / 21
+
+# Create a grouping variable
+df$group <- rep(1:num_groups, each=21)
+
+# Reshape the data
+df_wide <- df %>%
+  group_by(group) %>%
+  mutate(row_in_group = row_number()) %>%
+  pivot_wider(
+    id_cols = row_in_group,
+    names_from = group,
+    values_from = c(Estimate, P_Value),
+    names_glue = "{.value}_Group{group}"
+  )
+
+# Arrange columns in the desired order
+col_order <- c(rbind(
+  paste0("Estimate_Group", 1:num_groups),
+  paste0("P_Value_Group", 1:num_groups)
+))
+
+df_wide <- df_wide %>% select(all_of(col_order))
+
+# View the result
+write.csv(df_wide, "C:\\Users\\timothy\\OneDrive\\Documents\\ISU\\food_project\\data\\data_for_test\\sort\\02.csv",na='',row.names=FALSE)
+rm(list=ls())
 ```
 
